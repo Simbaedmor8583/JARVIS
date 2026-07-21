@@ -1,0 +1,85 @@
+# JARVIS Second Capability Matrix (CSV)
+
+Generated: July 19, 2026 18:24
+
+Category,Capability,Source File,Entry Function,GUI Connection,Voice Connection,Typed Connection,Router Skill,Planner Action,Dependency,External Software,Account Requirement,Test Evidence,Live Evidence,Packaged Result,Known Error,Final Classification,Next Action
+System,Config loading,config.py,load_dotenv,N/A,N/A,N/A,N/A,N/A,python-dotenv,None,None,None,Code inspection,,WORKING IN PACKAGED BUILD,
+System,Settings store,core/settings.py,SettingsStore,YES,N/A,N/A,N/A,N/A,None,None,None,5 tests pass,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,Live test needed
+System,Settings window,gui/settings_window.py,SettingsWindow,YES,N/A,N/A,N/A,N/A,PySide6,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,Live test needed
+System,Multi-path .env loading,config.py,Config,N/A,N/A,N/A,N/A,N/A,python-dotenv,None,None,None,Code inspection,,WORKING IN PACKAGED BUILD,
+OpenRouter,LLM.chat(),brain/llm.py,LLM.chat,YES,YES,YES,chat,N/A,openai httpx,None,OpenRouter key,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,Live test needed
+OpenRouter,LLM.stream(),brain/llm.py,LLM.stream,YES,NO,YES,N/A,N/A,openai httpx,None,OpenRouter key,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,Live test needed
+OpenRouter,LLM.quick(),brain/llm.py,LLM.quick,YES,NO,YES,N/A,N/A,openai httpx,None,OpenRouter key,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+OpenRouter,LLM.quick_json(),brain/llm.py,LLM.quick_json,NO,NO,YES,N/A,N/A,openai httpx,None,OpenRouter key,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+OpenRouter,LLM.test_connection(),brain/llm.py,LLM.test_connection,YES,NO,NO,N/A,N/A,openai httpx,None,OpenRouter key,1 test pass,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,Live test needed
+OpenRouter,Error sanitization,brain/llm.py,chat/test_connection,YES,YES,YES,N/A,N/A,openai,None,OpenRouter key,1 test partial,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+OpenRouter,Timeout + retry,brain/llm.py,chat,N/A,N/A,N/A,N/A,N/A,httpx,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+OpenRouter,Test Connection button,gui/settings_window.py,_on_test_connection,YES,NO,NO,N/A,N/A,PySide6 openai,None,OpenRouter key,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,Live test needed
+Router,Qwen classify(),brain/router.py,Router.classify,NO,YES,YES,N/A,N/A,torch transformers,None,None,None,Code inspection,DISABLED,DISABLED
+Router,Fast lane regex,brain/router.py,fast_lane,YES,YES,YES,N/A,N/A,None,None,None,40+ tests pass,Code inspection,,WORKING IN PACKAGED BUILD,
+Router,Valid skills allowlist,brain/router.py,VALID_SKILLS,N/A,N/A,N/A,N/A,N/A,None,None,None,Code inspection,,WORKING IN PACKAGED BUILD,
+Planner,Multi-step plan,core/planner.py,plan_command,YES,YES,YES,N/A,N/A,None,None,None,1 test pass,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Planner,Compound decomposition,core/planner.py,plan_command,NO,YES,YES,N/A,N/A,None,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+DesktopAgent,Mouse movement,core/desktop_agent.py,move_to,YES,YES,YES,agent,N/A,pyautogui,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,Live test needed
+DesktopAgent,Click,core/desktop_agent.py,click,YES,YES,YES,agent,N/A,pyautogui,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+DesktopAgent,Keyboard typing,core/desktop_agent.py,type_text,YES,YES,YES,agent,N/A,pyautogui,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+DesktopAgent,Copy/paste,core/desktop_agent.py,_clipboard,YES,YES,YES,agent,N/A,pyperclip,None,None,1 test pass,Code inspection,,TEST ONLY,Needs live test
+DesktopAgent,Screenshot,core/desktop_agent.py,screenshot,YES,YES,YES,agent,N/A,pyautogui,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+DesktopAgent,Emergency stop,core/desktop_agent.py,request_stop,YES,YES,YES,agent,N/A,pyautogui,None,None,1 test pass,Log: EMERGENCY STOP,WORKING IN PACKAGED BUILD,Confirmed in logs
+DesktopAgent,Confirmation system,core/desktop_agent.py,confirm,NO,NO,NO,agent,N/A,None,None,None,1 test pass,Log: no handler,PARTIALLY WORKING,Fix confirmation routing
+DesktopAgent,Stop Task button,gui/main_window.py,_on_stop_task,YES,NO,NO,N/A,N/A,PySide6,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Registry,Register item,core/registry.py,register,YES,YES,YES,app,N/A,None,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Registry,Close by name,core/registry.py,close_by_name,YES,YES,YES,app,N/A,None,None,None,1 test pass,Code inspection,,TEST ONLY,
+Registry,Close all,core/registry.py,close_all,YES,YES,YES,app,N/A,None,None,None,1 test pass,Code inspection,,TEST ONLY,
+Registry,Close most recent,core/registry.py,close_most_recent,YES,YES,YES,app,N/A,None,None,None,1 test pass,Code inspection,,TEST ONLY,
+Registry,GUI panel,gui/main_window.py,_refresh_registry,YES,N/A,N/A,N/A,N/A,PySide6,None,None,4 tests pass,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Voice,Mic enumeration,voice/devices.py,list_devices,YES,YES,NO,N/A,N/A,sounddevice,None,None,1 test pass,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,Live test needed
+Voice,Test Microphone,gui/settings_window.py,_on_test_mic,YES,N/A,N/A,N/A,N/A,sounddevice numpy,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Voice,Wake word detection,voice/wakeword.py,WakeWordEngine,NO,YES,NO,N/A,N/A,openwakeword onnxruntime,None,None,None,Code inspection,WORKING IN PACKAGED BUILD,Confirmed in logs
+Voice,Whisper STT,voice/listener.py,Listener,NO,YES,NO,N/A,N/A,faster-whisper,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Voice,Piper TTS,voice/speaker.py,Speaker,YES,YES,NO,N/A,N/A,piper pygame,None,None,None,Log: Piper playback,WORKING IN PACKAGED BUILD,Confirmed in logs
+Voice,Edge TTS (disabled),voice/speaker.py,Speaker,N/A,N/A,N/A,N/A,N/A,edge-tts,None,None,None,Config,EDGE_TTS_ENABLED=false,DISABLED
+Voice,Barge-in,voice/speaker.py,Speaker.stop,YES,YES,YES,N/A,N/A,pygame,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Voice,Mute/unmute,voice/speech_service.py,mute,YES,YES,NO,N/A,N/A,pygame,None,None,1 test pass,Log: muted/unmuted,WORKING IN PACKAGED BUILD,Confirmed in logs
+Browser,Open browser,skills/browser.py,BrowserEngine.ensure,YES,YES,YES,browser.open,N/A,playwright,Edge/Chrome,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,Live test needed
+Browser,Open YouTube,skills/browser.py,search_youtube,YES,YES,YES,browser,N/A,playwright,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Browser,YouTube search,skills/browser.py,search_youtube,YES,YES,YES,browser,N/A,playwright,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Browser,Persistent profile,skills/browser.py,BrowserEngine,N/A,N/A,N/A,N/A,N/A,playwright,None,None,None,DIR: browser-profile,WORKING IN PACKAGED BUILD,Directory exists
+Browser,Auto-install Chromium,skills/browser.py,_install_chromium,N/A,N/A,N/A,N/A,N/A,playwright,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Window,Open application,skills/window_control.py,open_app,YES,YES,YES,app.open,N/A,None,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Window,Close application,skills/window_control.py,close_app,YES,YES,YES,app.close,N/A,pygetwindow,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Window,Bring to front,skills/window_control.py,bring_front,YES,YES,YES,app,N/A,pygetwindow,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Volume,Volume control,skills/volume.py,set_volume,NO,YES,YES,system.volume,N/A,pycaw,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Media,Media controls,skills/media.py,control,NO,YES,YES,media.,N/A,None,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Office,Open Word,skills/office_service.py,open,YES,YES,YES,office,N/A,win32com,MS Word,None,None,Code inspection,,REQUIRES EXTERNAL SOFTWARE,
+Office,Create Word doc,skills/word_skill.py,create_doc,YES,YES,YES,office,N/A,win32com python-docx,MS Word,None,None,Code inspection,,REQUIRES EXTERNAL SOFTWARE,
+Office,Open Excel,skills/office_service.py,open,NO,YES,YES,office,N/A,win32com,MS Excel,None,None,Code inspection,,REQUIRES EXTERNAL SOFTWARE,
+Office,Open PowerPoint,skills/office_service.py,open,NO,YES,YES,office,N/A,win32com,MS PPT,None,None,Code inspection,,REQUIRES EXTERNAL SOFTWARE,
+News,RSS headlines,skills/news_service.py,headlines,NO,YES,YES,news,N/A,feedparser,None,None,None,Log: loaded 1 headline,CONNECTED BUT NOT LIVE VERIFIED,
+News,Refresh button,gui/main_window.py,_skill_news_refresh,YES,NO,YES,N/A,N/A,PySide6,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+News,Read aloud,gui/main_window.py,_skill_news_read,YES,NO,NO,N/A,N/A,PySide6,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+News,Open article,gui/main_window.py,_skill_news_open,YES,NO,NO,N/A,N/A,PySide6,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+News,Save to Word,gui/main_window.py,_skill_news_save,YES,NO,NO,N/A,N/A,PySide6 python-docx,MS Word,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Research,Web research,skills/research.py,handle_utterance,NO,YES,YES,research,N/A,openai,None,OpenRouter key,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Organizer,Desktop organizer,skills/organizer.py,organize,YES,YES,YES,organizer,N/A,None,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Chat,Chat (OpenRouter),skills/chat.py,handle,NO,YES,YES,chat,N/A,openai,None,OpenRouter key,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Email,SMTP/IMAP,skills/emailer.py,send_email,NO,YES,YES,email,N/A,smtplib,None,Gmail creds,None,Code inspection,,REQUIRES CONFIGURATION,
+Email,Browser Gmail,skills/gmail.py,handle,NO,YES,YES,email,N/A,playwright,None,Google login,None,Code inspection,,REQUIRES LOGIN,
+Music,Play music,skills/media.py,play,NO,YES,YES,media.play_music,N/A,playwright,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+WhatsApp,WhatsApp Web,skills/whatsapp.py,handle,NO,YES,YES,whatsapp,N/A,playwright,None,WhatsApp login,None,Code inspection,,REQUIRES LOGIN,
+Files,File search,skills/file_search.py,search,NO,YES,YES,file,N/A,None,None,None,None,Code inspection,,PARTIALLY WORKING,
+Files,Create folder,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,None,None,None,None,None,MISSING,Implement file_manager skill
+Files,Create file,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,None,None,None,None,None,MISSING,Implement file_manager skill
+Files,Rename file,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,None,None,None,None,None,MISSING,Implement file_manager skill
+Files,Copy file,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,None,None,None,None,None,MISSING,Implement file_manager skill
+Files,Move file,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,None,None,None,None,None,MISSING,Implement file_manager skill
+Files,Delete to trash,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,None,None,None,None,None,MISSING,Implement file_manager skill
+Screen,Read active window,core/desktop_agent.py,active_window_title,YES,NO,YES,N/A,N/A,pygetwindow,None,None,1 test pass,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Screen,Screen OCR,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,None,None,None,None,None,MISSING,
+Screen,Visual understanding,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,MISSING,None,None,None,None,None,MISSING,
+Power,Lock PC,skills/system_control.py,lock,NO,YES,YES,system.lock,N/A,None,None,None,None,Code inspection,,UNSAFE TO TEST AUTOMATICALLY,
+Power,Shutdown,skills/system_control.py,shutdown,NO,YES,YES,system.shutdown,N/A,None,None,None,None,Code inspection,,UNSAFE TO TEST AUTOMATICALLY,
+Memory,JSON memory,skills/memory_skill.py,handle,NO,YES,YES,memory,N/A,None,None,None,None,Code inspection,,CONNECTED BUT NOT LIVE VERIFIED,
+Audit,Audio log,voice/audio_log.py,log,NO,YES,NO,N/A,N/A,None,None,None,None,Log files exist,WORKING IN PACKAGED BUILD,
+Audit,Startup log,voice/audio_log.py,N/A,NO,NO,NO,N/A,N/A,None,None,None,None,Log file exists,WORKING IN PACKAGED BUILD,
+Audit,Error log,voice/audio_log.py,log_error,NO,NO,NO,N/A,N/A,None,None,None,None,Log file exists,WORKING IN PACKAGED BUILD,

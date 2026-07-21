@@ -1,0 +1,65 @@
+# Secrets and local configuration
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+credentials*.json
+secrets*.json
+
+# Python environments and caches
+.venv/
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Dependencies
+node_modules/
+
+# Build and release output
+build/
+dist/
+release/
+*.spec
+
+# Local application data and downloaded models
+data/browser_profile/
+data/cache/
+data/piper/
+data/*.json
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+
+# Logs, backups, and temporary files
+.backups/
+.test_tmp/
+logs/
+log/
+tmp/
+temp/
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+.test_patch.txt
+
+# OS and editor metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/

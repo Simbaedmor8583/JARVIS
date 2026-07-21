@@ -1,0 +1,2 @@
+/* Visual marker only; animation cadence is controlled by widget state. */
+QLabel#stateBanner { background: rgba(0, 217, 245, 9); }

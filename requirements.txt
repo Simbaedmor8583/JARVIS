@@ -1,0 +1,65 @@
+# ==========================================================================
+# JARVIS — pinned dependencies (Python 3.11+, Windows 11)
+# ==========================================================================
+# NOTE: for a much smaller/faster torch install use the CPU wheel first:
+#   pip install torch==2.4.1 --index-url https://download.pytorch.org/whl/cpu
+# then run:  pip install -r requirements.txt
+# (If you have an NVIDIA GPU, install the CUDA torch build instead —
+#  faster-whisper and the router will use it automatically.)
+# ==========================================================================
+
+# ---- Core AI ------------------------------------------------------------------
+# Installed explicitly from the PyTorch CPU index by build_exe.bat.
+transformers==4.44.2
+tokenizers==0.19.1
+accelerate==0.34.2
+openai==1.51.0
+
+# ---- Voice pipeline -------------------------------------------------------------
+faster-whisper==1.0.3
+sounddevice==0.4.7
+webrtcvad==2.0.10
+edge-tts==6.1.12
+pygame==2.6.0
+openwakeword==0.6.0
+onnxruntime==1.27.0
+numpy==1.26.4
+scipy==1.14.1
+piper-tts==1.4.2
+
+# ---- Browser automation ------------------------------------------------------------
+playwright==1.47.0
+
+# ---- Windows desktop automation --------------------------------------------------------
+pyautogui==0.9.54
+pywinauto==0.6.8
+pywin32==306
+pygetwindow==0.0.9
+pyperclip==1.9.0
+psutil==6.0.0
+pycaw==20240210
+comtypes==1.4.6
+
+# ---- Office documents --------------------------------------------------------------------
+python-docx==1.1.2
+openpyxl==3.1.5
+python-pptx==1.0.2
+Pillow==10.4.0
+
+# ---- Web / data ----------------------------------------------------------------------------
+requests==2.32.3
+beautifulsoup4==4.12.3
+lxml==5.3.0
+feedparser==6.0.11
+python-dotenv==1.0.1
+colorama==0.4.6
+duckduckgo-search==6.2.13
+fuzzywuzzy==0.18.0
+python-Levenshtein==0.25.1
+pystray==0.19.5
+keyboard==0.13.5
+
+# ---- Build and test -------------------------------------------------------
+setuptools==80.9.0
+pyinstaller==6.21.0
+pytest==8.3.3

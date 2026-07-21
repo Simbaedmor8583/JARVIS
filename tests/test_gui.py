@@ -1,0 +1,112 @@
+﻿"""GUI tests (offscreen). Verify the window builds, panels update, and the
+application list reflects the session registry without blocking the GUI."""
+import os
+import time
+
+os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
+import pytest
+
+pytest.importorskip("PySide6")
+
+from PySide6.QtWidgets import QApplication
+
+from config import ensure_dirs
+from core.settings import SettingsStore
+from gui import styles
+from gui.workers import GuiController
+from gui.main_window import MainWindow
+
+from tests.test_controller import make_ctx
+
+
+@pytest.fixture(scope="session")
+def qapp():
+    app = QApplication.instance() or QApplication([])
+    app.setStyleSheet(styles.APP_QSS)
+    yield app
+
+
+@pytest.fixture()
+def window(qapp, tmp_path):
+    ensure_dirs()
+    settings = SettingsStore(tmp_path / "config.json")
+    gc = GuiController(controller=None, skip_preload=True, debug=True)
+    # swap the heavy ctx for the lightweight fake
+    gc.controller.ctx = make_ctx()
+    w = MainWindow(gc, settings)
+    yield w
+    w.close()
+    w.deleteLater()
+
+
+def test_window_builds_with_all_buttons(window):
+    for attr in ("btn_start", "btn_stop", "btn_mute", "btn_browser", "btn_files",
+                 "btn_logs", "btn_settings", "btn_send", "btn_min", "btn_exit"):
+        assert hasattr(window, attr), attr
+
+
+def test_window_title_and_core(window):
+    assert "JARVIS" in window.windowTitle()
+    assert window.core is not None
+
+
+def test_state_updates_core_and_status(window):
+    window._slot_state("recording", "Recording command")
+    assert "recording" in window.current_status.text().lower()
+    assert window.core._state == "recording"
+
+
+def test_registry_panel_updates(window):
+    items = [
+        {"id": "a", "type": "app", "name": "Notepad", "state": "open",
+         "opened_at": time.time()},
+        {"id": "b", "type": "browser_tab", "name": "YouTube", "state": "open",
+         "opened_at": time.time()},
+    ]
+    window._fill_registry(items)
+    assert window.apps.count() == 2
+    assert "Notepad" in window.apps.item(0).text()
+    assert "YouTube" in window.apps.item(1).text()
+
+
+def test_registry_panel_reflects_close(window):
+    items = [{"id": "a", "type": "app", "name": "Notepad", "state": "open",
+              "opened_at": time.time()}]
+    window._fill_registry(items)
+    assert window.apps.count() == 1
+    window._fill_registry([])  # after closing
+    assert window.apps.count() == 0
+
+
+def test_timeline_records_stages(window):
+    window._slot_timeline("heard", "open notepad")
+    window._slot_timeline("cleaned", "open notepad")
+    assert window.timeline.count() == 2
+    assert window.fields["cleaned"].text() == "open notepad"
+
+
+def test_transcription_field_updates(window):
+    window.gc.bridge.transcription.emit("hello jarvis")
+    QApplication.processEvents()
+    assert window.fields["transcription"].text() == "hello jarvis"
+
+
+def test_send_button_submits_typed_command(window, monkeypatch):
+    submitted = []
+    monkeypatch.setattr(window.gc, "submit_text", lambda t: submitted.append(t))
+    window.input.setText("open downloads")
+    window._on_send()
+    assert submitted == ["open downloads"]
+    assert window.input.text() == ""
+
+
+def test_voice_toggle_calls_controller(window, monkeypatch):
+    calls = {"start": 0, "stop": 0}
+    monkeypatch.setattr(window.gc, "start_voice",
+                        lambda: calls.__setitem__("start", calls["start"] + 1) or True)
+    monkeypatch.setattr(window.gc, "stop_voice",
+                        lambda: calls.__setitem__("stop", calls["stop"] + 1) or True)
+    window._on_start_voice()
+    window._on_stop_voice()
+    assert calls == {"start": 1, "stop": 1}
