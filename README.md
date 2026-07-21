@@ -1,148 +1,113 @@
-﻿# JARVIS â€” Local Desktop AI Assistant (Windows 11)
+# JARVIS — Local Desktop AI Assistant
 
-A complete, locally-running JARVIS-style voice assistant. Two brains (a local
-Qwen router + OpenRouter cloud brain), a fast rule lane for instant commands,
-full voice pipeline (offline wake word, faster-whisper STT, edge-tts voice),
-and 14 pluggable skills covering apps, browser, email, news, music, WhatsApp,
-Office documents, desktop organization, app building and deep research.
+JARVIS is a Windows desktop voice assistant that combines local speech and routing models with an optional OpenRouter-powered cloud model. It can launch and control applications, automate browser and Office tasks, manage email and WhatsApp workflows, play media, research topics, and respond through speech.
 
-Say **"Hey Jarvis"** â€” it answers, listens, acts, and reports back.
+The project is under active development. Treat automation that sends messages, moves files, or controls the operating system with appropriate care.
 
----
+## What the project does
 
-## 1. Requirements
+- Listens for the “Hey Jarvis” wake phrase and accepts spoken commands.
+- Uses a fast rule-based lane and a local Qwen router to select actions.
+- Supports speech-to-text, text-to-speech, and interruption while speaking.
+- Controls Windows applications, volume, media, windows, and common system actions.
+- Automates browser, Gmail, WhatsApp, Word, Excel, and PowerPoint workflows.
+- Provides research, news, memory, file search, and desktop organization skills.
+- Uses OpenRouter for optional cloud conversation, drafting, research, and summaries.
 
-- Windows 11, Python **3.11 or 3.12** (64-bit)
-- A microphone + speakers (headphones recommended â€” see "Barge-in" below)
-- The default cloud model is `deepseek/deepseek-v4-flash` through OpenRouter (set `OPENROUTER_MODEL` to change).
+## Requirements
 
-An **OpenRouter API key** (https://openrouter.ai) for the cloud brain
-- ~4 GB free disk for models on first run (Whisper + Qwen + Chromium)
+- Windows 11
+- 64-bit Python 3.11 or 3.12
+- A microphone and speakers or headphones
+- Approximately 4 GB of free disk space for downloaded models and Chromium
+- An OpenRouter API key if you want cloud-backed features
 
-## 2. Setup (development mode)
+## How to install it
 
-```bat
-cd JARVIS
+Open Command Prompt or PowerShell in the project directory:
+
+```powershell
 python -m venv .venv
-.venv\Scripts\activate
-
-REM smaller/faster CPU-only torch first (recommended):
+.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 pip install torch==2.4.1 --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
-
-REM Playwright browser:
 python -m playwright install chromium
+```
 
-REM secrets:
-copy .env.example .env
-notepad .env        REM put your OPENROUTER_API_KEY in
+Create a local `.env` file in the project root and add only the settings you need:
 
+```dotenv
+OPENROUTER_API_KEY=your_key_here
+OPENROUTER_MODEL=deepseek/deepseek-v4-flash
+```
+
+For SMTP/IMAP fallback, you may also configure `EMAIL_ADDRESS` and `EMAIL_APP_PASSWORD`. Never commit `.env`, API keys, app passwords, browser profiles, or other credentials. They are intentionally excluded by `.gitignore`.
+
+The first run may download the wake-word model, Whisper model, local router model, and browser components.
+
+## How to run it
+
+Start the full voice assistant:
+
+```powershell
 python main.py
 ```
 
-First run downloads: the `hey_jarvis` wake-word model (auto), the Whisper
-`base` model (~150 MB), and Qwen2.5-0.5B-Instruct (~1 GB) from Hugging Face.
-After that everything is cached.
+Run without wake-word or text-to-speech support:
 
-## 3. Building the .exe
-
-```bat
-build_exe.bat
+```powershell
+python main.py --text-only
 ```
 
-Output: `dist\JARVIS.exe` â€” single file, console window shows heard text,
-intent, action and result. The exe runs from anywhere and still treats your
-Desktop as home base. Notes:
+Useful diagnostic options include `--debug` for full tracebacks and `--skip-model-preload` for a faster startup check.
 
-- Secrets are never embedded. Place `.env` next to `JARVIS.exe`; it is loaded
-  at startup and can be changed without rebuilding.
-- Playwright's Chromium is **not** embedded (keeps the exe lean); on first
-  browser use JARVIS auto-downloads it (`playwright install chromium`).
-- The wake-word model and Python packages are bundled via `--collect-all`.
+To run the automated tests:
 
-## 4. Gmail setup
-
-**Browser mode (default, recommended):** the first time you say "check my
-email", a Chromium window opens Gmail. Log in once within 60 seconds â€” the
-profile persists forever after (it lives in `data/browser_profile`).
-
-**SMTP/IMAP fallback:** only needed if the Gmail UI ever fails.
-1. Google Account â†’ Security â†’ enable 2-Step Verification.
-2. Search "App passwords" â†’ create one named JARVIS â†’ copy the 16-char code.
-3. Put `EMAIL_ADDRESS` and `EMAIL_APP_PASSWORD` in `.env`.
-
-## 5. Talking to JARVIS
-
-Wake phrase: **"Hey Jarvis"** â†’ it replies "Yes, sir?" â†’ speak your command.
-Barge-in: say **"Jarvis stop"** (or just "stop") while it's talking.
-
-| You say | What happens |
-|---|---|
-| open notepad / open youtube / open my resume | universal opener (app â†’ file â†’ folder â†’ site) |
-| close it / close YouTube / close everything you opened | Session Registry teardown |
-| volume up / mute / screenshot / lock the pc / status report | system control |
-| shut down / restart / sleep the computer | voice-confirmed power control |
-| play music | asks what you're in the mood for, then plays it on YouTube |
-| play lana del rey | straight to playback |
-| pause / resume / next video / stop the music | music controls |
-| check my email / read the email from Sara | Gmail in the browser |
-| write an email to Ahmed about the meeting | drafts â†’ reads it aloud â†’ confirms â†’ sends |
-| what's the latest news / tech news / UAE news | spoken briefing from RSS feeds |
-| tell me more about the third one | fetches + summarizes that article |
-| save the news | .docx briefing on your Desktop |
-| let's do research on X | deep-research mode: discuss â†’ outline â†’ sources â†’ draft â†’ Word doc |
-| open whatsapp / read messages from Mom / reply to all unread | WhatsApp Desktop automation |
-| write an essay about X in Word | .docx on Desktop, opens visibly in Word |
-| create a spreadsheet of monthly expenses | .xlsx with headers + formulas, opens in Excel |
-| create a presentation about X with 10 slides | .pptx, opens in PowerPoint |
-| organize my desktop / undo organize | sorts files into category folders, fully reversible |
-| open codex and create an app that does X | Codex CLI in a new terminal (or generates the code itself) |
-| search for X | Google results tab |
-| remember that I take tea at 4 | persistent memory (data/memory.json) |
-| anything else | conversation with memory, JARVIS personality |
-
-## 6. Safety
-
-Voice confirmation is required before: sending emails, sending WhatsApp
-messages, deleting anything, shutdown. Everything else executes immediately.
-
-- `CONFIRM_SENDS=false` in `.env` disables all confirmations.
-- `AUTO_SEND=true` auto-sends WhatsApp replies (use carefully).
-- The Desktop Organizer **never deletes** â€” moves only, all logged, undoable.
-
-## 7. Architecture
-
-```
-main.py                wake loop + orchestration + console log
-config.py              .env loading, paths, flags
-brain/router.py        rule-based fast lane + local Qwen2.5-0.5B classifier
-brain/llm.py           OpenRouter client (OpenAI-compatible, streaming)
-brain/prompts.py       router / personality / research / drafting prompts
-voice/wakeword.py      openwakeword "hey_jarvis" (offline)
-voice/listener.py      faster-whisper + webrtcvad silence detection
-voice/speaker.py       edge-tts + pygame, threaded, barge-in stop
-voice/pipeline.py      reusable complete voice-pipeline facade
-core/registry.py       Session Registry â€” everything JARVIS opened
-skills/*.py            14 pluggable skill modules
-data/                  registry, memory, logs, research session, browser profile
+```powershell
+python -m pytest
 ```
 
-Command pipeline: **pending state â†’ fast lane (regex, 0 ms) â†’ Qwen router
-(local, <1 s) â†’ skill dispatch**. The cloud brain is only used for
-conversation, drafting, research and summaries â€” never for routing.
+To build the Windows executable:
 
-## 8. Notes & limitations
+```powershell
+.\build_exe.bat
+```
 
-- **Barge-in accuracy:** the "stop" monitor listens through your mic while
-  JARVIS speaks. Speakers can echo into the mic â€” headphones make it crisp.
-- **WhatsApp/Gmail UI automation** is best-effort by nature (their UIs change);
-  every step has fallbacks and speaks clearly if something fails.
-- **WhatsApp Desktop** must be installed and logged in (phone linked).
-- `python main.py --text-only` runs without wake-word or TTS. Add `--debug`
-  when you want full exception tracebacks during development.
-- `python main.py --skip-model-preload` skips background Whisper/router
-  preload for faster startup checks; models still load when first used.
-- Edge TTS is preferred, with automatic offline Piper fallback on HTTP 403
-  and all other network or synthesis errors.
-- Router model is small on purpose (fast). If it mis-routes an odd phrasing,
-  rephrase slightly â€” or say the fast-lane phrasing from the table above.
+Generated executables and build output are not stored in the repository.
+
+## Current problems
+
+- Wake-word and “stop” detection can pick up speaker echo; headphones work best.
+- Gmail and WhatsApp automation can break when their user interfaces change.
+- WhatsApp workflows require the desktop application to be installed and linked.
+- The small local routing model can misclassify unusual phrasing.
+- First-run setup is large and slow because several models and browser components are downloaded.
+- Hardware, microphone, Windows permissions, and third-party service differences need broader testing.
+
+## Features we need help with
+
+- More reliable Gmail, WhatsApp, and browser selectors and recovery paths.
+- Better routing accuracy, intent coverage, and multilingual commands.
+- Improved wake-word, barge-in, and noisy-room behavior.
+- Automated setup, dependency checks, and clearer first-run diagnostics.
+- More unit and integration tests, especially for failure and safety paths.
+- Accessibility improvements and testing across different Windows configurations.
+- Documentation for adding new skills and supported automation targets.
+
+## Contributing
+
+Issues, fixes, and feature proposals are welcome.
+
+1. Open an issue for significant changes so the approach can be discussed first.
+2. Fork the repository and create a focused branch from `main`.
+3. Make a small, well-scoped change and add or update tests.
+4. Run `python -m pytest` and document any tests that cannot run locally.
+5. Confirm your commit contains no secrets, `.env` files, credentials, personal data, logs, databases, browser profiles, generated builds, or downloaded models.
+6. Submit a pull request describing the problem, the solution, testing performed, and any user-visible behavior changes.
+
+Do not include real API keys, OpenRouter credentials, email app passwords, private keys, or private documents in issues, commits, test fixtures, screenshots, or pull requests.
+
+## Safety notes
+
+JARVIS can interact with applications and operating-system functions. Review configuration carefully and keep confirmation prompts enabled for sensitive actions such as sending messages or shutting down the computer. Test automation with non-sensitive accounts and files whenever possible.
