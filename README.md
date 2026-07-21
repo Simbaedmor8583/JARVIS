@@ -1,113 +1,176 @@
-# JARVIS — Local Desktop AI Assistant
+# JARVIS
 
-JARVIS is a Windows desktop voice assistant that combines local speech and routing models with an optional OpenRouter-powered cloud model. It can launch and control applications, automate browser and Office tasks, manage email and WhatsApp workflows, play media, research topics, and respond through speech.
+### Local desktop intelligence for Windows
 
-The project is under active development. Treat automation that sends messages, moves files, or controls the operating system with appropriate care.
+JARVIS is a cinematic, voice-enabled Windows desktop assistant that combines local speech and intent models with an optional OpenRouter-powered cloud model. It provides one interface for voice commands, application control, browser automation, Office workflows, research, email, media, system actions, and extensible skills.
 
-## What the project does
+> [!CAUTION]
+> Never commit or share your `.env`, OpenRouter API key, email app password, private keys, browser profile, or other credentials. Local secrets and runtime data are excluded by this repository’s `.gitignore`.
 
-- Listens for the “Hey Jarvis” wake phrase and accepts spoken commands.
-- Uses a fast rule-based lane and a local Qwen router to select actions.
-- Supports speech-to-text, text-to-speech, and interruption while speaking.
-- Controls Windows applications, volume, media, windows, and common system actions.
-- Automates browser, Gmail, WhatsApp, Word, Excel, and PowerPoint workflows.
-- Provides research, news, memory, file search, and desktop organization skills.
-- Uses OpenRouter for optional cloud conversation, drafting, research, and summaries.
+## Screenshots
+
+### Desktop dashboard
+
+![JARVIS desktop dashboard](screenshots/dashboard-interface.png)
+
+### Capability registry
+
+![JARVIS capability registry](screenshots/capabilities-interface.png)
+
+## Features
+
+- “Hey Jarvis” wake phrase with speech-to-text and text-to-speech support
+- Fast rule-based command lane plus local Qwen intent routing
+- Cinematic PySide6 dashboard with subsystem and capability health
+- Windows application, window, volume, media, screenshot, and power controls
+- Browser automation and web research workflows
+- Gmail and WhatsApp drafting and automation with confirmation paths
+- Word, Excel, and PowerPoint document generation
+- News briefings, persistent memory, file search, and desktop organization
+- Text-only and diagnostic modes for development and troubleshooting
+- Extensible skill and capability registry
 
 ## Requirements
 
-- Windows 11
-- 64-bit Python 3.11 or 3.12
-- A microphone and speakers or headphones
-- Approximately 4 GB of free disk space for downloaded models and Chromium
-- An OpenRouter API key if you want cloud-backed features
+- Windows 11, 64-bit
+- Python 3.11 or 3.12
+- Microphone and speakers or headphones for voice mode
+- Approximately 4 GB of free disk space for models and Chromium
+- Internet access for initial downloads and network-backed features
+- Optional OpenRouter API key for cloud conversation, drafting, and research
 
-## How to install it
+## Installation
 
-Open Command Prompt or PowerShell in the project directory:
+Clone the repository and enter the project directory:
+
+```powershell
+git clone https://github.com/momorzq-oss/JARVIS.git
+cd JARVIS
+```
+
+Create and activate a virtual environment:
 
 ```powershell
 python -m venv .venv
-.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
+```
+
+Install the CPU build of PyTorch first, followed by the project dependencies and Chromium:
+
+```powershell
 pip install torch==2.4.1 --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
 python -m playwright install chromium
 ```
 
-Create a local `.env` file in the project root and add only the settings you need:
+If PowerShell blocks virtual-environment activation, run this once in the current terminal:
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+```
+
+### Local configuration
+
+Create a `.env` file in the project root. Add only the values you need:
 
 ```dotenv
 OPENROUTER_API_KEY=your_key_here
 OPENROUTER_MODEL=deepseek/deepseek-v4-flash
 ```
 
-For SMTP/IMAP fallback, you may also configure `EMAIL_ADDRESS` and `EMAIL_APP_PASSWORD`. Never commit `.env`, API keys, app passwords, browser profiles, or other credentials. They are intentionally excluded by `.gitignore`.
+SMTP/IMAP fallback may additionally use `EMAIL_ADDRESS` and `EMAIL_APP_PASSWORD`. Keep all real values local. The application can run without OpenRouter, but cloud-backed features will be unavailable.
 
-The first run may download the wake-word model, Whisper model, local router model, and browser components.
+## How to run
 
-## How to run it
+Launch the desktop interface:
 
-Start the full voice assistant:
+```powershell
+python desktop_main.py --skip-model-preload
+```
+
+Launch the desktop interface with full model preloading:
+
+```powershell
+python desktop_main.py
+```
+
+Run the console assistant or text-only mode:
 
 ```powershell
 python main.py
-```
-
-Run without wake-word or text-to-speech support:
-
-```powershell
 python main.py --text-only
 ```
 
-Useful diagnostic options include `--debug` for full tracebacks and `--skip-model-preload` for a faster startup check.
+Useful troubleshooting flags include `--debug` and `--skip-model-preload`.
 
-To run the automated tests:
+Run the test suite with:
 
 ```powershell
 python -m pytest
 ```
 
-To build the Windows executable:
+Build the Windows executable with:
 
 ```powershell
 .\build_exe.bat
 ```
 
-Generated executables and build output are not stored in the repository.
+Build output is generated locally and is not stored in Git.
 
-## Current problems
+## Project structure
 
-- Wake-word and “stop” detection can pick up speaker echo; headphones work best.
-- Gmail and WhatsApp automation can break when their user interfaces change.
-- WhatsApp workflows require the desktop application to be installed and linked.
-- The small local routing model can misclassify unusual phrasing.
-- First-run setup is large and slow because several models and browser components are downloaded.
-- Hardware, microphone, Windows permissions, and third-party service differences need broader testing.
+```text
+JARVIS/
+├── brain/              Local and cloud language-model routing
+├── core/               Controller, capability, planning, and automation core
+├── data/               Local runtime state; generated data is ignored
+├── gui/                PySide6 desktop interface, themes, pages, and widgets
+├── memory/             Memory package
+├── screenshots/        Public interface screenshots used by this README
+├── skills/             Browser, Office, media, research, and system skills
+├── tests/              Unit, integration, routing, voice, and GUI tests
+├── utils/              Shared utilities
+├── voice/              Capture, wake word, speech recognition, and synthesis
+├── config.py           Environment and path configuration
+├── desktop_main.py     Desktop GUI entry point
+├── main.py             Voice and text assistant entry point
+└── requirements.txt    Pinned Python dependencies
+```
 
-## Features we need help with
+## Current roadmap
 
-- More reliable Gmail, WhatsApp, and browser selectors and recovery paths.
-- Better routing accuracy, intent coverage, and multilingual commands.
-- Improved wake-word, barge-in, and noisy-room behavior.
-- Automated setup, dependency checks, and clearer first-run diagnostics.
-- More unit and integration tests, especially for failure and safety paths.
-- Accessibility improvements and testing across different Windows configurations.
-- Documentation for adding new skills and supported automation targets.
+- Improve noisy-room wake-word and barge-in accuracy
+- Make browser, Gmail, and WhatsApp selectors more resilient to UI changes
+- Expand intent coverage and multilingual command support
+- Add guided first-run setup and clearer dependency diagnostics
+- Increase unit, integration, safety, and hardware compatibility coverage
+- Improve accessibility and responsive behavior on smaller displays
+- Document the skill API and make third-party skill development easier
+
+## Known issues
+
+- Speaker echo can affect wake-word and “stop” detection; headphones work best.
+- Gmail and WhatsApp automation may require updates when their interfaces change.
+- WhatsApp automation requires the desktop application to be installed and linked.
+- The small local router can misclassify uncommon wording.
+- Initial setup is large because speech models, the router model, and Chromium are downloaded.
+- Some capabilities depend on optional applications, credentials, hardware, or Windows permissions.
+- The interface is optimized for larger desktop displays and needs more small-screen testing.
 
 ## Contributing
 
-Issues, fixes, and feature proposals are welcome.
+Issues, fixes, tests, and focused feature proposals are welcome.
 
-1. Open an issue for significant changes so the approach can be discussed first.
-2. Fork the repository and create a focused branch from `main`.
-3. Make a small, well-scoped change and add or update tests.
-4. Run `python -m pytest` and document any tests that cannot run locally.
-5. Confirm your commit contains no secrets, `.env` files, credentials, personal data, logs, databases, browser profiles, generated builds, or downloaded models.
-6. Submit a pull request describing the problem, the solution, testing performed, and any user-visible behavior changes.
+1. Open an issue for substantial changes so the approach can be discussed.
+2. Fork the repository and create a branch from `main`.
+3. Keep changes focused and add or update relevant tests.
+4. Run `python -m pytest` and report any checks that cannot run locally.
+5. Audit your changes for secrets, personal data, logs, databases, generated files, and downloaded models.
+6. Submit a pull request describing the problem, solution, testing, and user impact.
 
-Do not include real API keys, OpenRouter credentials, email app passwords, private keys, or private documents in issues, commits, test fixtures, screenshots, or pull requests.
+Do not place real credentials or private information in commits, issues, screenshots, fixtures, or pull requests.
 
-## Safety notes
+## License
 
-JARVIS can interact with applications and operating-system functions. Review configuration carefully and keep confirmation prompts enabled for sensitive actions such as sending messages or shutting down the computer. Test automation with non-sensitive accounts and files whenever possible.
+No open-source license has been selected yet. Until a license file is added, copyright remains with the repository owner and the code may be viewed and evaluated but is not automatically licensed for redistribution or commercial use.
