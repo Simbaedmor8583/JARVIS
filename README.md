@@ -223,4 +223,4 @@ Mohammed Ali Abdulla Mohammed Al Marzooqi is an Emirati technology enthusiast, A
 
 ## License
 
-No open-source license has been selected yet. Until a license file is added, copyright remains with the repository owner and the code may be viewed and evaluated but is not automatically licensed for redistribution or commercial use.
+This project is licensed under the MIT License. See the LICENSE file for details.
